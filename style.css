@@ -672,7 +672,7 @@ header nav > div {
   color: #E60041;
 }
 .conFlavor-description .list p {
-  font-size: 1.2vw;
+  font-size: 1vw;
   font-family: var(--font-family-pretendard-medium);
   margin-bottom: 3vw;
 }

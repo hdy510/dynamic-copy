@@ -530,6 +530,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
             delay: 5000,
             disableOnInteraction: false,
         },
+        mouseWheel: true,
     });
 
 
@@ -590,8 +591,14 @@ document.addEventListener("DOMContentLoaded", (event) => {
 
     // [swiper 각 슬라이드 클릭 시 active 상태로 변경]
     let swiperSlides = document.querySelectorAll('.conFlavor .conFlavor-imgs .swiper-slide');
-    swiperSlides.forEach(slide => {
-        slide.addEventListener("click", () => {
+    swiperSlides.forEach((slide, index) => {
+        slide.addEventListener("click", (event) => {
+            // 클릭된 슬라이드의 인덱스 가져오기
+            const slideIndex = index;
+
+            // 해당 슬라이드로 이동
+            swiper.slideToLoop(slideIndex);
+
             // 모든 슬라이드에서 active 클래스 제거
             swiperSlides.forEach(slide => {
                 slide.classList.remove("swiper-slide-active");
@@ -599,11 +606,10 @@ document.addEventListener("DOMContentLoaded", (event) => {
             // 클릭한 슬라이드에 active 클래스 추가
             slide.classList.add("swiper-slide-active");
 
-            // 슬라이드 위치 앞으로 이동
-
-
             // 해당하는 맛 설명으로 변화
-            
+            const clickedSlide = event.currentTarget;
+            const clickedFlavor = clickedSlide.getAttribute('data-flavor');
+            updateDescription(clickedFlavor);
         });
     });
 
