@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Swiper with GSAP</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+  <link rel="stylesheet" href="css.css">
+</head>
+
+<body>
+  <header>
+    <h1>
+      <a href="">
+        <img src="src/logo.png" alt="다이나믹 로고">
+      </a>
+    </h1>
+    <nav>
+      <div>Main</div>
+      <div>Quality</div>
+      <div>Flavor</div>
+      <div>About Us</div>
+    </nav>
+  </header>
+  <div class="view swiper">
+    <div class="swiper-wrapper">
+      <div class="swiper-slide">
+        <section class="section1">
+          <div class="conMain-ellipseBox"></div>
+          <div class="conMain-text beMore">
+            <img src="src/text-be-more.png" alt="BE-MORE">
+          </div>
+          <div class="conMain-products">
+            <img src="src/product-01.png" alt="다이나믹 메인 제품 이미지">
+          </div>
+          <div class="conMain-text dynamic">
+            <img src="src/text-dynamic.png" alt="DYNAMIC">
+          </div>
+        </section>
+      </div>
+      <div class="swiper-slide">
+        <section class="section2">
+          <div class="conMain-centerBox">
+            <div class="conMain-products2">
+              <img src="src/product-02.png" alt="다이나믹 메인 제품 이미지2">
+            </div>
+            <div class="conMain-text2">
+              <p class="title">컴팩트한 사이즈로 손 안에 쏙 들어오는 안정적인 그립감</p>
+            </div>
+            <div class="conMain-text3">
+              <p class="count"><b id="count">0</b> <span>PUFFS</span></p>
+              <p class="title">10ML 대용량으로 하루종일 베이핑해도 걱정없이</p>
+            </div>
+            <div class="conMain-text4">
+              <p class="detail">Refill Container Capacity<span>10 mL</span></p>
+              <p class="detail">Nicotine Strength<span>9.8 mg/mL</span></p>
+              <p class="detail">Puffs<span>Up to 5000</span></p>
+            </div>
+          </div>
+        </section>
+      </div>
+      <div class="swiper-slide">
+        <section class="section3">
+          3
+        </section>
+      </div>
+      <div class="swiper-slide">
+        <section class="section4">
+          4
+        </section>
+      </div>
+      <div class="swiper-slide">
+        <section class="section5">
+          5
+        </section>
+      </div>
+    </div>
+  </div>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <script>
+     // [반응형 설정]
+    const mediaQueryTablet = window.matchMedia("(max-width: 1280px)");
+    const mediaQueryMobile = window.matchMedia("(max-width: 640px)");
+
+
+  
+    let initialScrollCompleted = false; // 초기 애니메이션 완료 상태
+    let firstScrollCompleted = false; // 첫 번째 스크롤 애니메이션 완료 상태
+  
+    // Swiper 설정
+    const swiper = new Swiper('.view.swiper', {
+      direction: 'vertical',
+      mousewheel: {
+        enabled: false, // 초기에는 Swiper 스크롤 비활성화
+      },
+      on: {
+        slideChangeTransitionStart: () => {
+        // 현재 활성 슬라이드 가져오기
+        const activeSection = document.querySelector('.swiper-slide-active section');
+
+        // 1번 슬라이드로 돌아오면 초기 상태로 재설정
+        if (activeSection.classList.contains('section1')) {
+          resetToInitialState();
+        }
+
+        // 모든 애니메이션 초기화
+        gsap.killTweensOf(".conMain-ellipseBox, .conMain-text, .conMain-products");
+        gsap.to(".conMain-ellipseBox, .conMain-text, .conMain-products", { clearProps: "all" });
+
+
+
+
+
+
+
+
+
+        // 반응형에 따라 애니메이션 다르게 적용
+        // 화면 가로폭
+        // const screenWidth = window.innerWidth;
+
+        if (activeSection.classList.contains("section1")) {
+          if (mediaQueryMobile.matches) {
+            // 모바일 구간#####################
+            gsap.to(".conMain-ellipseBox", { scale: 1.2, duration: 1 });
+            gsap.to(".conMain-text.beMore", { x: 50, opacity: 1, duration: 1 });
+            gsap.to(".conMain-products", { y: -30, opacity: 1, duration: 1 });
+          } else if (mediaQueryTablet.matches) {
+            // 태블릿 구간#####################
+            gsap.to(".conMain-ellipseBox", { scale: 1, duration: 1 });
+            gsap.to(".conMain-text.beMore", { x: 20, opacity: 0.8, duration: 1 });
+            gsap.to(".conMain-products", { y: 0, opacity: 0.8, duration: 1 });
+          } else {
+            // 데스크탑 구간#####################
+            gsap.to(".conMain-ellipseBox", { scale: 1, duration: 1 });
+            gsap.to(".conMain-text.beMore", { x: 20, opacity: 1, duration: 1 });
+            gsap.to(".conMain-products", { y: 0, opacity: 1, duration: 1 });
+          }
+        } else if (activeSection.classList.contains("section2")) {
+          
+
+
+
+
+
+
+
+        }
+        },
+      },
+    });
+
+
+
+
+
+
+
+
+  
+      // 초기 애니메이션 설정
+      const initialAnimation = () => {
+        if (mediaQueryMobile.matches) {
+          // 모바일 구간##################
+          gsap.fromTo(
+            ".conMain-products",
+            { scale: 0.4, opacity: 0.4, filter: "blur(1.8vw)" },
+            {
+              scale: 2.5,
+              opacity: 1,
+              filter: "blur(0px)",
+              duration: 1,
+              ease: "power3.inOut",
+              onComplete: () => {
+                initialScrollCompleted = true; // 초기 애니메이션 완료 상태
+              },
+            }
+          );
+
+        } else if (mediaQueryTablet.matches) {
+          // 태블릿 구간##################
+          gsap.fromTo(
+            ".conMain-products",
+            { scale: 0.4, opacity: 0.4, filter: "blur(1.8vw)" },
+            {
+              scale: 1.8,
+              opacity: 1,
+              filter: "blur(0px)",
+              duration: 1,
+              ease: "power3.inOut",
+              onComplete: () => {
+                initialScrollCompleted = true; // 초기 애니메이션 완료 상태
+              },
+            }
+          );
+
+        } else {
+          // 데스크탑 구간##################
+          gsap.fromTo(
+            ".conMain-products",
+            { scale: 0.4, opacity: 0.4, filter: "blur(1.8vw)" },
+            {
+              scale: 1,
+              opacity: 1,
+              filter: "blur(0px)",
+              duration: 1,
+              ease: "power3.inOut",
+              onComplete: () => {
+                initialScrollCompleted = true; // 초기 애니메이션 완료 상태
+              },
+            }
+          );
+        }
+    };
+  
+      // 첫 번째 스크롤 애니메이션
+      const firstScrollAnimation = () => {
+        if (mediaQueryMobile.matches) {
+          // 모바일 구간##################
+          gsap.timeline({
+            onComplete: () => {
+              firstScrollCompleted = true; // 첫 번째 스크롤 완료 상태
+              swiper.mousewheel.enable(); // Swiper 활성화
+            },
+          })
+            .fromTo(
+              ".conMain-text.beMore",
+              { right: "100%", opacity: 0 },
+              { right: "11%", opacity: 1, duration: 0.3 }
+            )
+            .fromTo(
+              ".conMain-text.dynamic",
+              { left: "100%", opacity: 0 },
+              { left: "11%", opacity: 1, duration: 0.3 }
+              , "<")
+            .fromTo(
+              ".conMain-ellipseBox",
+              { opacity: 1, scale: 0 },
+              { opacity: 1, scale: 550, duration: 0.3, ease: "power1.inOut" }
+              , "<");
+        } else if (mediaQueryTablet.matches) {
+          // 태블릿 구간##################
+          gsap.timeline({
+            onComplete: () => {
+              firstScrollCompleted = true; // 첫 번째 스크롤 완료 상태
+              swiper.mousewheel.enable(); // Swiper 활성화
+            },
+          })
+            .fromTo(
+              ".conMain-text.beMore",
+              { right: "100%", opacity: 0 },
+              { right: "11%", opacity: 1, duration: 0.3 }
+            )
+            .fromTo(
+              ".conMain-text.dynamic",
+              { left: "100%", opacity: 0 },
+              { left: "11%", opacity: 1, duration: 0.3 }
+              , "<")
+            .fromTo(
+              ".conMain-ellipseBox",
+              { opacity: 1, scale: 0 },
+              { opacity: 1, scale: 450, duration: 0.3, ease: "power1.inOut" }
+              , "<");
+        } else {
+          // 데스크탑 구간##################
+          gsap.timeline({
+            onComplete: () => {
+              firstScrollCompleted = true; // 첫 번째 스크롤 완료 상태
+              swiper.mousewheel.enable(); // Swiper 활성화
+            },
+          })
+            .fromTo(
+              ".conMain-text.beMore",
+              { right: "100%", opacity: 0 },
+              { right: "8vw", opacity: 1, duration: 0.3 }
+            )
+            .fromTo(
+              ".conMain-text.dynamic",
+              { left: "100%", opacity: 0 },
+              { left: "8vw", opacity: 1, duration: 0.3 }
+              , "<")
+            .fromTo(
+              ".conMain-ellipseBox",
+              { opacity: 1, scale: 0 },
+              { opacity: 1, scale: 450, duration: 0.3, ease: "power1.inOut" }
+              , "<");
+        };
+      }
+
+    
+    // 상태 초기화 함수
+    const resetToInitialState = () => {
+      swiper.mousewheel.disable(); // Swiper 비활성화
+      initialScrollCompleted = false;
+      firstScrollCompleted = false;
+  
+      // 요소 상태 초기화
+      gsap.set(".conMain-products", { scale: 0.4, opacity: 0.4, filter: "blur(1.8vw)" });
+      gsap.set(".conMain-text.beMore", { right: "100%", opacity: 0 });
+      gsap.set(".conMain-text.dynamic", { left: "100%", opacity: 0 });
+      gsap.set(".conMain-ellipseBox", { opacity: 1, scale: 0 });
+  
+      // 초기 애니메이션 재실행
+      initialAnimation();
+    };
+  
+    // 스크롤 이벤트 감지
+    window.addEventListener(
+      "wheel",
+      (event) => {
+        if (!initialScrollCompleted) {
+          event.preventDefault(); // 초기 스크롤 차단
+        } else if (!firstScrollCompleted) {
+          event.preventDefault(); // 첫 번째 스크롤 동작 처리
+          firstScrollAnimation(); // 첫 번째 스크롤 애니메이션 실행
+        }
+      },
+      { passive: false }
+    );
+  
+    // 초기 애니메이션 자동 실행
+    document.addEventListener("DOMContentLoaded", () => {
+      initialAnimation();
+    });
+  </script>
+  
+  
+  
+
+</body>
+
+</html>
