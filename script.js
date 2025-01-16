@@ -397,8 +397,8 @@ gsap.set(".header h1 .white", { opacity: 1 });
 gsap.set(".header nav div", { color: "#ffffff" });
 gsap.set(".conQuality-bg.blue", { backgroundColor: "#720EFF" });
 gsap.set(".conQuality-text3 .detail .underline", { width: 0 });
-gsap.set(".conQuality-text3", { y: 0, opacity: 1, x: 0 });
-gsap.set(".conQuality-text4", { y: 50, opacity: 0, x: 0 });
+gsap.set(".conQuality-text3", { top: "50%", opacity: 1 });
+gsap.set(".conQuality-text4", { left: 0 });
 gsap.set(".conQuality-text4 .detail span", { opacity: 0 });
 
 // 애니메이션 실행
@@ -424,25 +424,21 @@ gsap.timeline()
     { width: "100%", duration: 0.4 }
   )
   .fromTo('.conQuality-text3', 
-    { y: 0 },
-    { y: -370, duration: 0.4 }
+    { top: "50%" },
+    { top: "-20%", duration: 0.4 }
   , "<180%")
   .fromTo('.conQuality-text4', 
-    { y: 50, opacity: 0 },
-    { y: -320, opacity: 1, duration: 0.4 }
+    { top: "100%", opacity: 0 },
+    { top: "0", opacity: 1, duration: 0.4 }
   , "<")
   .fromTo('.conQuality-text3', 
     { opacity: 1 },
     { opacity: 0, duration: 0.4 }
   , "<30%")
-  .fromTo('.conQuality-text3', 
-    { x: 0 },
-    { x: -500, duration: 0.4 }
-  )
   .fromTo('.conQuality-text4', 
-    { x: 0 },
-    { x: -500, duration: 0.4 }
-  , "<")
+    { left: 0 },
+    { left: "-75%", duration: 0.4 }
+  )
   .fromTo('.conQuality-text4 .detail span',
     { opacity: 0 },
     { stagger: { each: 0.06 }, opacity: 1, duration: 0.4 }

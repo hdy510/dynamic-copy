@@ -103,7 +103,7 @@ header h1 a img.white {
 }
 header nav {
   display: flex;
-  gap: 3vw;
+  gap: 2.4vw;
   align-items: center;
   margin-right: 0.5vw;
 }
@@ -112,6 +112,7 @@ header nav > div {
   font-family: var(--font-family-hemi-head-bd-it);
   cursor: pointer;
   color: #fff;
+  padding: 0.6vw;
 }
 @media (max-width: 1280px) {
   header {
@@ -520,14 +521,24 @@ header nav > div {
   margin: 0 0.4vw;
  }
 
+ .conQuality-centerBox {
+  position: absolute;
+  /* background-color: beige; */
+  width: 26vw;
+  height: 26vw;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+ }
  .conQuality-text3 {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1vw;
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  display: flex;
-  flex-direction: column;
-  gap: 1.1vw;
+  white-space: nowrap;
  }
  .conQuality-text3 .detail {
   font-size: 2.4vw;
@@ -549,9 +560,8 @@ header nav > div {
 
  .conQuality-text4 {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  top: 0;
+  left: 0;
   display: flex;
   align-items: center;
  }
@@ -568,9 +578,10 @@ header nav > div {
   opacity: 0;*/
  }
  .conQuality-text4 .detail {
-  width: 39.8vw;
+  width: 41vw;
   position: absolute;
-  left: calc(100% + 2vw);
+  top: 0;
+  left: 108%;
  }
  .conQuality-text4 .detail span {
   font-size: 6.4vw;
@@ -710,12 +721,11 @@ header nav > div {
 }
 .conFlavor .conFlavor-description {
   width: 22vw;
-  /* background-color: red; */
-  height: 60vh;
+  height: 40vw;
   position: absolute;
-  top: 50%;
+  /* top: 50%; */
+  bottom: 0;
   left: 15%;
-  transform: translate(0%, -50%);
 }
 .conFlavor .conFlavor-description img {
   width: 100%;
@@ -843,7 +853,9 @@ header nav > div {
 .conFlavor .conFlavor-imgs {
   width: 63vw;
   position: absolute;
-  top: 17%;
+  /* top: 17%; */
+  bottom: 0;
+  /* top: 50%; */
   right: 0;
 }
 .conFlavor .conFlavor-imgs .swiper{
@@ -989,7 +1001,9 @@ header nav > div {
     transform: translateY(-0.8vw);
   }
 }
-.conAboutUs .topBtn img {}
+.conAboutUs .topBtn img {
+  width: 100%;
+}
 .conAboutUs footer {
   position: absolute;
   bottom: 0;
