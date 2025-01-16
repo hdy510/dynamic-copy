@@ -870,3 +870,62 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 });
+
+
+
+
+
+
+
+
+let initialTouchY = 0; // 터치 시작 Y 좌표
+let finalTouchY = 0; // 터치 종료 Y 좌표
+
+const swiperContainer = document.querySelector('.view.swiper'); // Swiper 컨테이너
+
+// 터치 시작 이벤트
+swiperContainer.addEventListener('touchstart', (event) => {
+  initialTouchY = event.touches[0].clientY;
+});
+
+// 터치 이동 이벤트
+swiperContainer.addEventListener('touchmove', (event) => {
+  finalTouchY = event.touches[0].clientY;
+
+  const deltaY = initialTouchY - finalTouchY;
+
+  if (!initialScrollCompleted) {
+    event.preventDefault(); // 초기 스크롤 차단
+  } else if (!firstScrollCompleted && deltaY > 50 && !isAnimating) {
+    // 아래에서 위로 드래그 시 첫 스크롤 애니메이션 실행
+    event.preventDefault();
+    isAnimating = true; // 애니메이션 진행 플래그
+    firstScrollAnimation(); // 첫 스크롤 애니메이션 호출
+
+    // 애니메이션 종료 후 상태 변경
+    setTimeout(() => {
+      firstScrollCompleted = true; // 첫 스크롤 애니메이션 완료
+      swiper.mousewheel.enable(); // Swiper 활성화
+      isAnimating = false; // 플래그 초기화
+    }, 1000); // 첫 스크롤 애니메이션 시간 (1초)
+  }
+});
+
+// 터치 종료 이벤트
+swiperContainer.addEventListener('touchend', () => {
+  if (firstScrollCompleted) {
+    const deltaY = initialTouchY - finalTouchY;
+
+    if (deltaY > 50) {
+      // 두 번째 드래그 시 Swiper 슬라이드 넘김
+      swiper.slideNext();
+    } else if (deltaY < -50) {
+      // 위로 드래그 시 Swiper 슬라이드 이전으로 이동
+      swiper.slidePrev();
+    }
+  }
+
+  // 터치 관련 변수 초기화
+  initialTouchY = 0;
+  finalTouchY = 0;
+});
