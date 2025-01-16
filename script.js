@@ -398,7 +398,7 @@ gsap.set(".header nav div", { color: "#ffffff" });
 gsap.set(".conQuality-bg.blue", { backgroundColor: "#720EFF" });
 gsap.set(".conQuality-text3 .detail .underline", { width: 0 });
 gsap.set(".conQuality-text3", { top: "50%", opacity: 1 });
-gsap.set(".conQuality-text4", { left: 0 });
+gsap.set(".conQuality-text4", { opacity: 0, left: 0 });
 gsap.set(".conQuality-text4 .detail span", { opacity: 0 });
 
 // 애니메이션 실행
