@@ -72,12 +72,16 @@ const swiper = new Swiper('.view.swiper', {
 const initialAnimation = () => {
   // 이전 애니메이션 강제 중단 및 초기화
   gsap.killTweensOf([
+    ".conMain-products",
+    ".conMain-scrollDown",
     "header h1 .black",
     "header h1 .white",
     "header nav div",
   ]);
 
   // 초기 상태 강제 설정
+  gsap.set(".conMain-products", { opacity: 0.4, scale: 0.4 });
+  gsap.set(".conMain-scrollDown", { opacity: 0 });
   gsap.set(".header h1 .black", { opacity: 0 });
   gsap.set(".header h1 .white", { opacity: 1 });
   gsap.set(".header nav div", { color: "#ffffff" });
@@ -103,6 +107,10 @@ const initialAnimation = () => {
       },
     }
   );
+  gsap.fromTo(".conMain-scrollDown",
+    { opacity: 0 },
+    { opacity:1, duration: 1, ease: "power3.inOut" }
+  , "<")
   gsap.fromTo("header h1 .black",
     { opacity: 0 },
     { opacity: 0, duration: 0.8 }
@@ -119,12 +127,31 @@ const initialAnimation = () => {
 
 // 첫 번째 스크롤 애니메이션
 const firstScrollAnimation = () => {
+  // 이전 애니메이션 강제 중단 및 초기화
+  gsap.killTweensOf([
+    ".conMain-scrollDown",
+  ]);
+
+  // 초기 상태 강제 설정
+  gsap.set(".conMain-scrollDown", { opacity: 0 });
+
   // 애니메이션 실행
-  const animationScale = mediaQueryMobile.matches
+  const ellipseBoxScale = mediaQueryMobile.matches
     ? 550
     : mediaQueryTablet.matches
     ? 450
     : 400;
+  const conMainTextRightLeft = mediaQueryMobile.matches
+    ? "5vw"
+    : mediaQueryTablet.matches
+    ? 40
+    : "8vw";
+  const ellipseBoxScaleY = mediaQueryMobile.matches
+  ? 180
+  : mediaQueryTablet.matches
+  ? 140
+  : 100;
+
 
   gsap.timeline({
     onComplete: () => {
@@ -132,27 +159,31 @@ const firstScrollAnimation = () => {
       swiper.mousewheel.enable(); // Swiper 활성화
     },
   })
+    .fromTo(".conMain-scrollDown",
+      { opacity: 1 },
+      { opacity: 0, duration: 0.1, ease: "power3.inOut" }
+    )
     .fromTo(
       ".conMain-text.beMore",
       { right: "100%", opacity: 0 },
-      { right: "8vw", opacity: 1, duration: 0.4 }
-    )
+      { right: conMainTextRightLeft, opacity: 1, duration: 0.4 }
+    , "<")
     .fromTo(
       ".conMain-text.dynamic",
       { left: "100%", opacity: 0 },
-      { left: "8vw", opacity: 1, duration: 0.4 },
+      { left: conMainTextRightLeft, opacity: 1, duration: 0.4 },
       "<"
     )
     .fromTo(
       ".conMain-ellipseBox",
       { opacity: 1, scale: 0 },
-      { opacity: 1, scale: animationScale, duration: 0.4, ease: "power1.inOut" },
+      { opacity: 1, scale: ellipseBoxScale, duration: 0.4, ease: "power1.inOut" },
       "<"
     )
     .fromTo(
       ".conMain-ellipseBox",
       { rotate: -15, backgroundColor: "#ffffff", borderRadius: "50%" },
-      { scaleY: 100, rotate: -35, backgroundColor: "#F81884", borderRadius: 0, duration: 0.6, ease: "power3.inOut" },
+      { scaleY: ellipseBoxScaleY, rotate: -35, backgroundColor: "#F81884", borderRadius: 0, duration: 0.6, ease: "power3.inOut" },
       "<50%"
     )
     .fromTo(
@@ -878,159 +909,159 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
-// 태블릿, 모바일 사이즈에서 첫 터치에 첫 스크롤 애니메이션, 두 번째 터치부터 swiper slide 넘어가게
-let isAnimating1 = false;
-let isAnimating2 = false;
-let firstTouchCompleted = false;
-let touchSlideMoved = false;
-let isTransitioning = false;
+// // 태블릿, 모바일 사이즈에서 첫 터치에 첫 스크롤 애니메이션, 두 번째 터치부터 swiper slide 넘어가게
+// let isAnimating1 = false;
+// let isAnimating2 = false;
+// let firstTouchCompleted = false;
+// let touchSlideMoved = false;
+// let isTransitioning = false;
 
-let initialTouchY = 0;
-let finalTouchY = 0;
-let lastSlideTime = 0;
-const minSwipeDistance = 50;
-const slideDelay = 400; // 슬라이드 간 최소 딜레이
+// let initialTouchY = 0;
+// let finalTouchY = 0;
+// let lastSlideTime = 0;
+// const minSwipeDistance = 50;
+// const slideDelay = 400; // 슬라이드 간 최소 딜레이
 
-const swiperContainer = document.querySelector('.view.swiper');
+// const swiperContainer = document.querySelector('.view.swiper');
 
-// Swiper 초기 설정
-swiper.allowSlideNext = false;
-swiper.allowSlidePrev = false;
-swiper.params.allowTouchMove = false;
-swiper.params.mousewheel.enabled = false;
-swiper.mousewheel.disable();
+// // Swiper 초기 설정
+// swiper.allowSlideNext = false;
+// swiper.allowSlidePrev = false;
+// swiper.params.allowTouchMove = false;
+// swiper.params.mousewheel.enabled = false;
+// swiper.mousewheel.disable();
 
-// Swiper 추가 설정
-swiper.params.speed = 300;
-swiper.params.touchRatio = 1;
-swiper.params.resistance = true;
-swiper.params.resistanceRatio = 0.85;
-swiper.params.threshold = 20;
-swiper.params.longSwipes = false;
-swiper.params.followFinger = false;
+// // Swiper 추가 설정
+// swiper.params.speed = 300;
+// swiper.params.touchRatio = 1;
+// swiper.params.resistance = true;
+// swiper.params.resistanceRatio = 0.85;
+// swiper.params.threshold = 20;
+// swiper.params.longSwipes = false;
+// swiper.params.followFinger = false;
 
-// 슬라이드 이동 함수
-const moveSlide = (direction) => {
-  const currentTime = new Date().getTime();
-  if (currentTime - lastSlideTime < slideDelay) return;
+// // 슬라이드 이동 함수
+// const moveSlide = (direction) => {
+//   const currentTime = new Date().getTime();
+//   if (currentTime - lastSlideTime < slideDelay) return;
 
-  isTransitioning = true;
-  touchSlideMoved = true;
+//   isTransitioning = true;
+//   touchSlideMoved = true;
 
-  if (direction === 'next' && !swiper.isEnd) {
-    swiper.slideNext();
-  } else if (direction === 'prev' && !swiper.isBeginning) {
-    swiper.slidePrev();
-  }
+//   if (direction === 'next' && !swiper.isEnd) {
+//     swiper.slideNext();
+//   } else if (direction === 'prev' && !swiper.isBeginning) {
+//     swiper.slidePrev();
+//   }
 
-  lastSlideTime = currentTime;
+//   lastSlideTime = currentTime;
 
-  setTimeout(() => {
-    isTransitioning = false;
-    touchSlideMoved = false;
-  }, swiper.params.speed + 100);
-};
+//   setTimeout(() => {
+//     isTransitioning = false;
+//     touchSlideMoved = false;
+//   }, swiper.params.speed + 100);
+// };
 
-// 마우스 휠 이벤트
-window.addEventListener(
-  "wheel",
-  (event) => {
-    if (isAnimating1 || isAnimating2) return;
+// // 마우스 휠 이벤트
+// window.addEventListener(
+//   "wheel",
+//   (event) => {
+//     if (isAnimating1 || isAnimating2) return;
 
-    const deltaY = event.deltaY;
+//     const deltaY = event.deltaY;
 
-    if (!initialScrollCompleted) {
-      event.preventDefault();
-    } else if (!firstScrollCompleted && deltaY > 0) {
-      event.preventDefault();
-      isAnimating1 = true;
-      firstScrollAnimation();
+//     if (!initialScrollCompleted) {
+//       event.preventDefault();
+//     } else if (!firstScrollCompleted && deltaY > 0) {
+//       event.preventDefault();
+//       isAnimating1 = true;
+//       firstScrollAnimation();
 
-      setTimeout(() => {
-        firstScrollCompleted = true;
-        isAnimating1 = false;
-        swiper.allowSlideNext = true;
-        swiper.allowSlidePrev = true;
-        swiper.params.allowTouchMove = true;
-        swiper.mousewheel.enable();
-      }, 1000);
-    }
-  },
-  { passive: false }
-);
+//       setTimeout(() => {
+//         firstScrollCompleted = true;
+//         isAnimating1 = false;
+//         swiper.allowSlideNext = true;
+//         swiper.allowSlidePrev = true;
+//         swiper.params.allowTouchMove = true;
+//         swiper.mousewheel.enable();
+//       }, 1000);
+//     }
+//   },
+//   { passive: false }
+// );
 
-// 터치 시작
-swiperContainer.addEventListener('touchstart', (event) => {
-  if (isAnimating1 || isAnimating2 || isTransitioning) return;
-  event.preventDefault();
+// // 터치 시작
+// swiperContainer.addEventListener('touchstart', (event) => {
+//   if (isAnimating1 || isAnimating2 || isTransitioning) return;
+//   event.preventDefault();
   
-  initialTouchY = event.touches[0].clientY;
-  finalTouchY = initialTouchY;
-}, { passive: false });
+//   initialTouchY = event.touches[0].clientY;
+//   finalTouchY = initialTouchY;
+// }, { passive: false });
 
-// 터치 이동
-swiperContainer.addEventListener('touchmove', (event) => {
-  if (isAnimating1 || isAnimating2 || isTransitioning) return;
-  event.preventDefault();
+// // 터치 이동
+// swiperContainer.addEventListener('touchmove', (event) => {
+//   if (isAnimating1 || isAnimating2 || isTransitioning) return;
+//   event.preventDefault();
   
-  finalTouchY = event.touches[0].clientY;
-}, { passive: false });
+//   finalTouchY = event.touches[0].clientY;
+// }, { passive: false });
 
-// 터치 종료
-swiperContainer.addEventListener('touchend', (event) => {
-  if (isAnimating1 || isAnimating2 || isTransitioning) return;
-  event.preventDefault();
+// // 터치 종료
+// swiperContainer.addEventListener('touchend', (event) => {
+//   if (isAnimating1 || isAnimating2 || isTransitioning) return;
+//   event.preventDefault();
 
-  const deltaY = initialTouchY - finalTouchY;
+//   const deltaY = initialTouchY - finalTouchY;
 
-  if (!firstTouchCompleted && swiper.activeIndex === 0) {
-    if (Math.abs(deltaY) > minSwipeDistance) {
-      isAnimating2 = true;
-      firstScrollAnimation();
+//   if (!firstTouchCompleted && swiper.activeIndex === 0) {
+//     if (Math.abs(deltaY) > minSwipeDistance) {
+//       isAnimating2 = true;
+//       firstScrollAnimation();
 
-      setTimeout(() => {
-        firstTouchCompleted = true;
-        isAnimating2 = false;
-        swiper.allowSlideNext = true;
-        swiper.allowSlidePrev = true;
-        swiper.params.allowTouchMove = true;
-        swiper.mousewheel.enable();
-      }, 1000);
-    }
-  } else if (firstTouchCompleted && Math.abs(deltaY) > minSwipeDistance) {
-    // 확실한 방향 체크 및 단일 슬라이드 이동
-    if (!isTransitioning) {
-      if (deltaY > 0) {
-        moveSlide('next');
-      } else {
-        moveSlide('prev');
-      }
-    }
-  }
+//       setTimeout(() => {
+//         firstTouchCompleted = true;
+//         isAnimating2 = false;
+//         swiper.allowSlideNext = true;
+//         swiper.allowSlidePrev = true;
+//         swiper.params.allowTouchMove = true;
+//         swiper.mousewheel.enable();
+//       }, 1000);
+//     }
+//   } else if (firstTouchCompleted && Math.abs(deltaY) > minSwipeDistance) {
+//     // 확실한 방향 체크 및 단일 슬라이드 이동
+//     if (!isTransitioning) {
+//       if (deltaY > 0) {
+//         moveSlide('next');
+//       } else {
+//         moveSlide('prev');
+//       }
+//     }
+//   }
 
-  initialTouchY = 0;
-  finalTouchY = 0;
-}, { passive: false });
+//   initialTouchY = 0;
+//   finalTouchY = 0;
+// }, { passive: false });
 
-// 슬라이드 변경 이벤트
-swiper.on('slideChange', () => {
-  if (swiper.activeIndex === 0 && !firstTouchCompleted) {
-    swiper.allowSlideNext = false;
-    swiper.allowSlidePrev = false;
-    swiper.params.allowTouchMove = false;
-    swiper.mousewheel.disable();
-  }
-});
+// // 슬라이드 변경 이벤트
+// swiper.on('slideChange', () => {
+//   if (swiper.activeIndex === 0 && !firstTouchCompleted) {
+//     swiper.allowSlideNext = false;
+//     swiper.allowSlidePrev = false;
+//     swiper.params.allowTouchMove = false;
+//     swiper.mousewheel.disable();
+//   }
+// });
 
-// 슬라이드 전환 시작 이벤트
-swiper.on('slideChangeTransitionStart', () => {
-  isTransitioning = true;
-});
+// // 슬라이드 전환 시작 이벤트
+// swiper.on('slideChangeTransitionStart', () => {
+//   isTransitioning = true;
+// });
 
-// 슬라이드 전환 완료 이벤트
-swiper.on('slideChangeTransitionEnd', () => {
-  setTimeout(() => {
-    isTransitioning = false;
-    touchSlideMoved = false;
-  }, 50);
-});
+// // 슬라이드 전환 완료 이벤트
+// swiper.on('slideChangeTransitionEnd', () => {
+//   setTimeout(() => {
+//     isTransitioning = false;
+//     touchSlideMoved = false;
+//   }, 50);
+// });
