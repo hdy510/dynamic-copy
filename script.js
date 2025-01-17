@@ -2,8 +2,6 @@
 const mediaQueryTablet = window.matchMedia("(max-width: 1280px)");
 const mediaQueryMobile = window.matchMedia("(max-width: 640px)");
 
-let initialScrollCompleted = false; // 초기 애니메이션 완료 상태
-let firstScrollCompleted = false; // 첫 번째 스크롤 애니메이션 완료 상태
 
 // 전체 페이지 슬라이드 Swiper 설정
 const swiper = new Swiper('.view.swiper', {
