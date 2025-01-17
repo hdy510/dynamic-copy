@@ -8,6 +8,10 @@ let firstScrollCompleted = false; // 첫 번째 스크롤 애니메이션 완료
 // 전체 페이지 슬라이드 Swiper 설정
 const swiper = new Swiper('.view.swiper', {
   direction: 'vertical',
+  // autoplay: {
+  //   delay: 4000,
+  //   disableOnInteraction: false,
+  // },
   mousewheel: {
     enabled: false, // 초기에는 Swiper 스크롤 비활성화
   },
@@ -15,10 +19,9 @@ const swiper = new Swiper('.view.swiper', {
     slideChangeTransitionStart: () => {
       const activeSection = document.querySelector('.swiper-slide-active section');
 
-      // 1번 슬라이드로 돌아오면 상태 초기화
+      // 1번 슬라이드 활성화 설정
       if (activeSection.classList.contains('section1')) {
-        resetToInitialState(); // 상태 초기화
-        firstScrollAnimation();
+        activateFirstSlide();
       }
 
       // 2번 슬라이드 활성화 설정
@@ -68,8 +71,12 @@ const swiper = new Swiper('.view.swiper', {
   },
 });
 
-// 초기 애니메이션 설정
-const initialAnimation = () => {
+
+
+
+
+// 첫 번째 슬라이드 애니메이션 (기존 initialAnimation과 firstScrollAnimation 통합)
+const activateFirstSlide = () => {
   // 이전 애니메이션 강제 중단 및 초기화
   gsap.killTweensOf([
     ".conMain-products",
@@ -77,9 +84,13 @@ const initialAnimation = () => {
     "header h1 .black",
     "header h1 .white",
     "header nav div",
+    ".conMain-ellipseBox",
+    ".conMain-text p",
+    ".conMain-text.beMore",
+    ".conMain-text.dynamic"
   ]);
 
-  // 초기 상태 강제 설정
+  // 초기 상태 설정
   gsap.set(".conMain-products", { opacity: 0.4, scale: 0.4 });
   gsap.set(".conMain-scrollDown", { opacity: 0 });
   gsap.set(".header h1 .black", { opacity: 0 });
@@ -93,75 +104,64 @@ const initialAnimation = () => {
     ? 1.8
     : 1;
 
-  gsap.fromTo(
-    ".conMain-products",
-    { scale: 0.4, opacity: 0.4, filter: "blur(1.8vw)" },
-    {
-      scale: animationScale,
-      opacity: 1,
-      filter: "blur(0px)",
-      duration: 1,
-      ease: "power3.inOut",
-      onComplete: () => {
-        initialScrollCompleted = true; // 초기 애니메이션 완료 상태
-      },
-    }
-  );
-  gsap.fromTo(".conMain-scrollDown",
-    { opacity: 0 },
-    { opacity:1, duration: 1, ease: "power3.inOut" }
-  , "<")
-  gsap.fromTo("header h1 .black",
-    { opacity: 0 },
-    { opacity: 0, duration: 0.8 }
-  )
-  gsap.fromTo("header h1 .white",
-    { opacity: 1 },
-    { opacity: 1, duration: 0.8 }
-  )
-  gsap.fromTo("header nav div", 
-    { color: "#ffffff" },
-    { color: "#ffffff", duration: 0.8 })
-
-};
-
-// 첫 번째 스크롤 애니메이션
-const firstScrollAnimation = () => {
-  // 이전 애니메이션 강제 중단 및 초기화
-  gsap.killTweensOf([
-    ".conMain-scrollDown",
-  ]);
-
-  // 초기 상태 강제 설정
-  gsap.set(".conMain-scrollDown", { opacity: 0 });
-
-  // 애니메이션 실행
   const ellipseBoxScale = mediaQueryMobile.matches
     ? 550
     : mediaQueryTablet.matches
     ? 450
     : 400;
+  
   const conMainTextRightLeft = mediaQueryMobile.matches
     ? "5vw"
     : mediaQueryTablet.matches
     ? 40
     : "8vw";
+  
   const ellipseBoxScaleY = mediaQueryMobile.matches
-  ? 180
-  : mediaQueryTablet.matches
-  ? 140
-  : 100;
-
+    ? 180
+    : mediaQueryTablet.matches
+    ? 140
+    : 100;
 
   gsap.timeline({
     onComplete: () => {
-      firstScrollCompleted = true; // 첫 번째 스크롤 완료 상태
-      swiper.mousewheel.enable(); // Swiper 활성화
+      initialAnimationCompleted = true;
+      swiper.mousewheel.enable(); // 애니메이션 완료 후 Swiper 활성화
     },
   })
-    .fromTo(".conMain-scrollDown",
-      { opacity: 1 },
-      { opacity: 0, duration: 0.1, ease: "power3.inOut" }
+    .fromTo(
+      ".conMain-products",
+      { scale: 0.4, opacity: 0.4, filter: "blur(1.8vw)" },
+      {
+        scale: animationScale,
+        opacity: 1,
+        filter: "blur(0px)",
+        duration: 1,
+        ease: "power3.inOut",
+      }
+    )
+    .fromTo(
+      ".conMain-ellipseBox",
+      { opacity: 1, scale: 0 },
+      { opacity: 1, scale: ellipseBoxScale, duration: 0.4, ease: "power1.inOut" },
+      "<50%"
+    )
+    .fromTo(
+      ".conMain-ellipseBox",
+      { rotate: -15, backgroundColor: "#ffffff", borderRadius: "50%" },
+      { scaleY: ellipseBoxScaleY, rotate: -35, backgroundColor: "#F81884", borderRadius: 0, duration: 0.6, ease: "power3.inOut" },
+      "<50%"
+    )
+    .fromTo(
+      ".conMain-ellipseBox",
+      { rotate: -35, backgroundColor: "#ffffff", borderRadius: "50%" },
+      { scaleY: ellipseBoxScaleY, rotate: 35, backgroundColor: "#F81884", borderRadius: 0, duration: 0.6, ease: "power3.inOut" },
+      "<50%"
+    )
+    .fromTo(
+      ".conMain-text p",
+      { color: "#F81884" },
+      { color: "#ffffff", duration: 0.6, ease: "power1.inOut" },
+      "<"
     )
     .fromTo(
       ".conMain-text.beMore",
@@ -171,27 +171,8 @@ const firstScrollAnimation = () => {
     .fromTo(
       ".conMain-text.dynamic",
       { left: "100%", opacity: 0 },
-      { left: conMainTextRightLeft, opacity: 1, duration: 0.4 },
-      "<"
-    )
-    .fromTo(
-      ".conMain-ellipseBox",
-      { opacity: 1, scale: 0 },
-      { opacity: 1, scale: ellipseBoxScale, duration: 0.4, ease: "power1.inOut" },
-      "<"
-    )
-    .fromTo(
-      ".conMain-ellipseBox",
-      { rotate: -15, backgroundColor: "#ffffff", borderRadius: "50%" },
-      { scaleY: ellipseBoxScaleY, rotate: -35, backgroundColor: "#F81884", borderRadius: 0, duration: 0.6, ease: "power3.inOut" },
-      "<50%"
-    )
-    .fromTo(
-      ".conMain-text p",
-      { color: "#F81884" },
-      { color: "#ffffff", duration: 0.6, ease: "power1.inOut" },
-      "<"
-    )
+      { left: conMainTextRightLeft, opacity: 1, duration: 0.4 }
+    , "<90%");
 };
 
 // 2번 슬라이드 애니메이션 설정 함수
@@ -254,7 +235,7 @@ const activateSecondSlide = () => {
       { innerText: 0 },
       {
         innerText: 10000,
-        duration: 1,
+        duration: 0.8,
         ease: "linear",
         snap: { innerText: 1 },
         onUpdate: function () {
@@ -560,26 +541,16 @@ gsap.killTweensOf([
   "header h1 .black",
   "header h1 .white",
   "header nav div",
-  ".conAboutUs-title",
-  ".conAboutUs-descriptionBox > img",
-  ".conAboutUs-descriptionBox .introduce",
-  ".conAboutUs-descriptionBox .promise",
-  ".conAboutUs-descriptionBox .phone",
-  ".conAboutUs .topBtn",
-  ".conAboutUs footer"
+  ".conAboutUs-descriptionBox",
+  ".conAboutUs-topBtn"
 ]);
 
 // 초기 상태 강제 설정
 gsap.set(".header h1 .black", { opacity: 0 });
 gsap.set(".header h1 .white", { opacity: 1 });
 gsap.set(".header nav div", { color: "#ffffff" });
-gsap.set(".conAboutUs-title", { opacity: 0 });
-gsap.set(".conAboutUs-descriptionBox > img", { opacity: 0 });
-gsap.set(".conAboutUs-descriptionBox .introduce", { opacity: 0 });
-gsap.set(".conAboutUs-descriptionBox .promise", { opacity: 0 });
-gsap.set(".conAboutUs-descriptionBox .phone", { opacity: 0 });
-gsap.set(".conAboutUs .topBtn", { opacity: 0 });
-gsap.set(".conAboutUs footer", { opacity: 0 });
+gsap.set(".conAboutUs-descriptionBox", { opacity: 0});
+gsap.set(".conAboutUs-topBtn", { opacity: 0});
 
 // 애니메이션 실행
 gsap.timeline()
@@ -595,51 +566,23 @@ gsap.timeline()
 { color: "#ffffff" },
 { color: "#0d0d0d", duration: 0.8 }
 , "<")
-.fromTo(".conAboutUs-title", 
-{ opacity: 0 },
-{ opacity: 1, duration: 0.8 }
+.fromTo("header nav div", 
+  { color: "#ffffff" },
+  { color: "#0d0d0d", duration: 0.8 }
 , "<")
-.fromTo(".conAboutUs-descriptionBox > img", 
-{ opacity: 0 },
-{ opacity: 1, duration: 0.8 })
-.fromTo(".conAboutUs-descriptionBox .introduce", 
-{ opacity: 0 },
-{ opacity: 1, duration: 0.8 })
-.fromTo(".conAboutUs-descriptionBox .promise", 
-{ opacity: 0 },
-{ opacity: 1, duration: 0.8 })
-.fromTo(".conAboutUs-descriptionBox .phone", 
-{ opacity: 0 },
-{ opacity: 1, duration: 0.8 })
-.fromTo(".conAboutUs .topBtn", 
-{ opacity: 0 },
-{ opacity: 1, duration: 0.8 })
-.fromTo(".conAboutUs footer", 
-{ opacity: 0 },
-{ opacity: 1, duration: 0.8 }
-, "<30%")
-};
+.fromTo(".conAboutUs-descriptionBox", 
+  { opacity: 0 },
+  { opacity: 1, duration: 1 }
+, "<")
+.fromTo(".conAboutUs-topBtn", 
+  { opacity: 0 },
+  { opacity: 1, duration: 1 }
+, "<")
 
 
 
 
 
-
-
-// 상태 초기화 함수
-const resetToInitialState = () => {
-  swiper.mousewheel.disable(); // Swiper 비활성화
-  initialScrollCompleted = false;
-  firstScrollCompleted = false;
-
-  // 요소 상태 초기화
-  gsap.set(".conMain-products", { scale: 0.4, opacity: 0.4, filter: "blur(1.8vw)" });
-  gsap.set(".conMain-text.beMore", { right: "100%", opacity: 0 });
-  gsap.set(".conMain-text.dynamic", { left: "100%", opacity: 0 });
-  gsap.set(".conMain-ellipseBox", { opacity: 1, scale: 0 });
-
-  // 초기 애니메이션 재실행
-  initialAnimation();
 };
 
 
@@ -658,23 +601,16 @@ const resetToInitialState = () => {
 
 
 
-// 스크롤 이벤트 감지
-let isAnimating = false; // 애니메이션 진행 중 여부를 나타내는 플래그
+
+
+
+
+// 스크롤 이벤트 처리
 window.addEventListener(
   "wheel",
   (event) => {
-    if (!initialScrollCompleted) {
-      event.preventDefault(); // 초기 스크롤 차단
-    } else if (!firstScrollCompleted && event.deltaY > 0 && !isAnimating) {
-      // 아래로 스크롤하는 경우에만 동작, 애니메이션 중일 때는 무시
+    if (!initialAnimationCompleted) {
       event.preventDefault();
-      isAnimating = true; // 애니메이션 시작
-      firstScrollAnimation(); // 첫 번째 스크롤 애니메이션 실행
-
-      // 애니메이션이 끝난 후 플래그 초기화
-      setTimeout(() => {
-        isAnimating = false; // 애니메이션 종료 후 다시 실행 가능
-      }, 1000); // 애니메이션 실행 시간에 맞게 조정
     }
   },
   { passive: false }
@@ -682,7 +618,7 @@ window.addEventListener(
 
 // 초기 애니메이션 자동 실행
 document.addEventListener("DOMContentLoaded", () => {
-  initialAnimation();
+  activateFirstSlide();
 });
 
 
@@ -803,26 +739,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 // 메뉴 클릭, top 버튼 클릭 시 페이지 이동
+
 document.addEventListener("DOMContentLoaded", () => {
-  // 메뉴 요소 가져오기
-  const menuMain = document.querySelector(".menuMain"); 
-  const menuFeature = document.querySelector(".menuFeature");
-  const menuQuality = document.querySelector(".menuQuality");
-  const menuFlavor = document.querySelector(".menuFlavor");
-  const menuAboutUs = document.querySelector(".menuAboutUs");
+
   const topBtn = document.querySelector(".conAboutUs .topBtn");
-
-
-
-
 
   const navigateToSlide = (index) => {
     // 특정 슬라이드로 이동
     swiper.slideTo(index, 1000, false);
-  
+
     // 슬라이드에 따라 header 색상 변경
     const activeSection = document.querySelector(`.swiper-slide:nth-child(${index + 1}) section`);
-  
+
     if (activeSection.classList.contains('section1') || activeSection.classList.contains('section9')) {
       // Section 1과 9에서는 header를 밝은 색으로 설정
       gsap.set("header h1 .black", { opacity: 0 });
@@ -834,73 +762,17 @@ document.addEventListener("DOMContentLoaded", () => {
       gsap.set("header h1 .white", { opacity: 0 });
       gsap.set("header nav div", { color: "#0d0d0d" });
     }
-  
-    // 슬라이드 이동과 동시에 애니메이션 실행
-    if (activeSection.classList.contains('section1')) {
-      firstScrollAnimation(); // 첫 번째 스크롤 애니메이션 호출
-    } else if (activeSection.classList.contains('section2')) {
-      activateSecondSlide();
-    } else if (activeSection.classList.contains('section3')) {
-      activateThirdSlide();
-    } else if (activeSection.classList.contains('section4')) {
-      activateFourthSlide();
-    } else if (activeSection.classList.contains('section5')) {
-      activateFifthSlide();
-    } else if (activeSection.classList.contains('section6')) {
-      activateSixthSlide();
-    } else if (activeSection.classList.contains('section7')) {
-      activateSeventhSlide();
-    } else if (activeSection.classList.contains('section8')) {
-      activateEighthSlide();
-    } else if (activeSection.classList.contains('section9')) {
-      activateNinthSlide();
-    }
-  
+
     // transitionEnd 이벤트가 발생하면 마우스 휠 활성화
     swiper.once("transitionEnd", () => {
       swiper.mousewheel.enable(); // 마우스 휠 활성화
     });
   };
-  
 
-  // 1. menuMain 클릭 시
-  menuMain.addEventListener("click", () => {
-    navigateToSlide(0)
-  });
-
-  // 2. menuFeature 클릭 시
-  menuFeature.addEventListener("click", () => {
-    navigateToSlide(1)
-  });
-
-  // 3. menuQuality 클릭 시
-  menuQuality.addEventListener("click", () => {
-    navigateToSlide(3)
-  });
-
-  // 4. menuFlavor 클릭 시
-  menuFlavor.addEventListener("click", () => {
-    navigateToSlide(7)
-  });
-
-  // 5. menuAboutUs 클릭 시
-  menuAboutUs.addEventListener("click", () => {
-    navigateToSlide(8);
-  });
-
-  // 6. top 버튼 클릭 시
+  // top 버튼 클릭 시
   topBtn.addEventListener("click", () => {
-    navigateToSlide(0)
+    navigateToSlide(0);
   });
-
-  
-
-
-
-
-
-
-
 });
 
 
@@ -908,160 +780,3 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
-
-// // 태블릿, 모바일 사이즈에서 첫 터치에 첫 스크롤 애니메이션, 두 번째 터치부터 swiper slide 넘어가게
-// let isAnimating1 = false;
-// let isAnimating2 = false;
-// let firstTouchCompleted = false;
-// let touchSlideMoved = false;
-// let isTransitioning = false;
-
-// let initialTouchY = 0;
-// let finalTouchY = 0;
-// let lastSlideTime = 0;
-// const minSwipeDistance = 50;
-// const slideDelay = 400; // 슬라이드 간 최소 딜레이
-
-// const swiperContainer = document.querySelector('.view.swiper');
-
-// // Swiper 초기 설정
-// swiper.allowSlideNext = false;
-// swiper.allowSlidePrev = false;
-// swiper.params.allowTouchMove = false;
-// swiper.params.mousewheel.enabled = false;
-// swiper.mousewheel.disable();
-
-// // Swiper 추가 설정
-// swiper.params.speed = 300;
-// swiper.params.touchRatio = 1;
-// swiper.params.resistance = true;
-// swiper.params.resistanceRatio = 0.85;
-// swiper.params.threshold = 20;
-// swiper.params.longSwipes = false;
-// swiper.params.followFinger = false;
-
-// // 슬라이드 이동 함수
-// const moveSlide = (direction) => {
-//   const currentTime = new Date().getTime();
-//   if (currentTime - lastSlideTime < slideDelay) return;
-
-//   isTransitioning = true;
-//   touchSlideMoved = true;
-
-//   if (direction === 'next' && !swiper.isEnd) {
-//     swiper.slideNext();
-//   } else if (direction === 'prev' && !swiper.isBeginning) {
-//     swiper.slidePrev();
-//   }
-
-//   lastSlideTime = currentTime;
-
-//   setTimeout(() => {
-//     isTransitioning = false;
-//     touchSlideMoved = false;
-//   }, swiper.params.speed + 100);
-// };
-
-// // 마우스 휠 이벤트
-// window.addEventListener(
-//   "wheel",
-//   (event) => {
-//     if (isAnimating1 || isAnimating2) return;
-
-//     const deltaY = event.deltaY;
-
-//     if (!initialScrollCompleted) {
-//       event.preventDefault();
-//     } else if (!firstScrollCompleted && deltaY > 0) {
-//       event.preventDefault();
-//       isAnimating1 = true;
-//       firstScrollAnimation();
-
-//       setTimeout(() => {
-//         firstScrollCompleted = true;
-//         isAnimating1 = false;
-//         swiper.allowSlideNext = true;
-//         swiper.allowSlidePrev = true;
-//         swiper.params.allowTouchMove = true;
-//         swiper.mousewheel.enable();
-//       }, 1000);
-//     }
-//   },
-//   { passive: false }
-// );
-
-// // 터치 시작
-// swiperContainer.addEventListener('touchstart', (event) => {
-//   if (isAnimating1 || isAnimating2 || isTransitioning) return;
-//   event.preventDefault();
-  
-//   initialTouchY = event.touches[0].clientY;
-//   finalTouchY = initialTouchY;
-// }, { passive: false });
-
-// // 터치 이동
-// swiperContainer.addEventListener('touchmove', (event) => {
-//   if (isAnimating1 || isAnimating2 || isTransitioning) return;
-//   event.preventDefault();
-  
-//   finalTouchY = event.touches[0].clientY;
-// }, { passive: false });
-
-// // 터치 종료
-// swiperContainer.addEventListener('touchend', (event) => {
-//   if (isAnimating1 || isAnimating2 || isTransitioning) return;
-//   event.preventDefault();
-
-//   const deltaY = initialTouchY - finalTouchY;
-
-//   if (!firstTouchCompleted && swiper.activeIndex === 0) {
-//     if (Math.abs(deltaY) > minSwipeDistance) {
-//       isAnimating2 = true;
-//       firstScrollAnimation();
-
-//       setTimeout(() => {
-//         firstTouchCompleted = true;
-//         isAnimating2 = false;
-//         swiper.allowSlideNext = true;
-//         swiper.allowSlidePrev = true;
-//         swiper.params.allowTouchMove = true;
-//         swiper.mousewheel.enable();
-//       }, 1000);
-//     }
-//   } else if (firstTouchCompleted && Math.abs(deltaY) > minSwipeDistance) {
-//     // 확실한 방향 체크 및 단일 슬라이드 이동
-//     if (!isTransitioning) {
-//       if (deltaY > 0) {
-//         moveSlide('next');
-//       } else {
-//         moveSlide('prev');
-//       }
-//     }
-//   }
-
-//   initialTouchY = 0;
-//   finalTouchY = 0;
-// }, { passive: false });
-
-// // 슬라이드 변경 이벤트
-// swiper.on('slideChange', () => {
-//   if (swiper.activeIndex === 0 && !firstTouchCompleted) {
-//     swiper.allowSlideNext = false;
-//     swiper.allowSlidePrev = false;
-//     swiper.params.allowTouchMove = false;
-//     swiper.mousewheel.disable();
-//   }
-// });
-
-// // 슬라이드 전환 시작 이벤트
-// swiper.on('slideChangeTransitionStart', () => {
-//   isTransitioning = true;
-// });
-
-// // 슬라이드 전환 완료 이벤트
-// swiper.on('slideChangeTransitionEnd', () => {
-//   setTimeout(() => {
-//     isTransitioning = false;
-//     touchSlideMoved = false;
-//   }, 50);
-// });
